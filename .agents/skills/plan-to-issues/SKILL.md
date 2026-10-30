@@ -11,8 +11,9 @@ in a shell this agent can run.
 ## Steps
 
 1. Read `plan.md`, `AGENTS.md` and `docs/adr/`.
-2. Draft the split as a table: title · plan section · scope · done when · blocked by.
-   One issue per unit of work.
+2. Draft the split as a table: title · plan section · scope · done when · blocked by · closure evidence.
+   One issue per unit of work. When later work needs an outside response, apply ADR 0002's
+   wait and cleanup dependencies. Include that wait in the split the human reviews.
 3. **Stop and show the table to the human.** Publish nothing until they approve it.
 4. Ask the human what every issue here must carry (fields, labels, wording), unless it is
    already written down in this session or in the repo.
@@ -24,7 +25,34 @@ in a shell this agent can run.
 
 6. Record every issue URL from gh's output (not from memory) and reply with the list.
 
-Closing one, with the closing comment from AGENTS.md:
+## Issue body
+
+Use the fields required by ADR 0002:
+
+```md
+Source: plan.md § <n>
+
+## Scope
+<unit of work>
+
+## Done when
+<observable acceptance condition>
+
+## Blocked by
+<issue links, or none>
+
+## Completion evidence
+<required evidence; record the actual result here before closing>
+```
+
+For an issue awaiting an outside response, its scope also names who or what it awaits,
+the required confirmation, and the callback or next-check method.
+
+## Closing an issue
+
+Record evidence that meets its done condition and check that blocking issues are resolved.
+For an outside wait, record the required confirmation first. Then use the closing comment
+from AGENTS.md:
 
 ```sh
 gh issue close <n> -c "<closing comment>"
