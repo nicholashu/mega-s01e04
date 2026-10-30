@@ -4,7 +4,7 @@ import type { DigestRow, ReadNight, RunStatus } from './types.js';
 
 type Run = { at: string; job: string; status: RunStatus; owner: string | null; error?: string };
 
-function validNight(night: string): boolean {
+export function validNight(night: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(night)
     && Number.isFinite(Date.parse(night))
     && new Date(night).toISOString().slice(0, 10) === night;
@@ -14,7 +14,7 @@ function isRun(value: unknown): value is Run {
   if (typeof value !== 'object' || value === null) return false;
   const run = value as Record<string, unknown>;
   return typeof run.at === 'string'
-    && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(run.at)
+    && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(run.at)
     && validNight(run.at.slice(0, 10))
     && Number.isFinite(Date.parse(run.at))
     && Number(run.at.slice(11, 13)) < 24

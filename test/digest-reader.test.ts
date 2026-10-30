@@ -23,6 +23,21 @@ async function fixture(lines: unknown[]) {
 }
 
 describe('night reader', () => {
+  it('counts fractions beyond millisecond precision as bad lines', async () => {
+    const dir = await fixture([
+      event({ job: 'too-precise', at: '2026-10-29T01:00:00.0009Z' }),
+      event({ job: 'too-precise', at: '2026-10-29T01:00:00.0001Z', status: 'fail' }),
+      event({ at: '2026-10-29T01:00:00.123Z' }),
+      event({ at: '2026-10-29T01:00:00.1Z' }),
+      event({ at: '2026-10-29T01:00:00.12Z', status: 'retry' }),
+    ]);
+    expect(await readNight(dir, night)).toMatchObject({
+      badLines: 2,
+      rows: [{ job: 'job', runs: 3, retries: 1, lastStatus: 'ok',
+        firstAt: '2026-10-29T01:00:00.1Z', lastAt: '2026-10-29T01:00:00.123Z' }],
+    });
+  });
+
   it('aggregates the real night without modifying its bytes', async () => {
     const runsDir = new URL('../runs/', import.meta.url).pathname;
     const file = join(runsDir, `${night}.jsonl`);

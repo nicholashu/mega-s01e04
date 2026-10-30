@@ -43,6 +43,17 @@ const unsortedNight = [
 ];
 
 describe('digest routes', () => {
+  it('keeps valid nights available on the board beside a calendar-invalid filename', async () => {
+    const runsDir = await nightOnDisk([event()]);
+    await writeFile(join(runsDir, '2026-02-30.jsonl'), '{}');
+    await writeFile(join(runsDir, '2024-02-29.jsonl'), JSON.stringify(event()));
+    const response = await app(runsDir).request('/');
+    expect(response.status).toBe(200);
+    const html = await response.text();
+    expect([...html.matchAll(/href="\/digest\/([^"]+)"/g)].map((match) => match[1]))
+      .toEqual(['2026-10-28', '2024-02-29']);
+  });
+
   it('serves the JSON envelope for an unsorted, mixed-offset night', async () => {
     const runsDir = await nightOnDisk(unsortedNight);
     const res = await app(runsDir).request(`/api/digest/${night}`);

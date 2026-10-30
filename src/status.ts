@@ -1,6 +1,6 @@
 import { readdirSync } from 'node:fs';
 import type { RigConfig } from './config.js';
-import { readNight } from './digest/reader.js';
+import { readNight, validNight } from './digest/reader.js';
 import type { DigestRow } from './digest/types.js';
 import { lastBeat, type Beat } from './heartbeat.js';
 
@@ -32,6 +32,7 @@ export function nightsOnDisk(runsDir: string): string[] {
     return readdirSync(runsDir)
       .filter((f) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f))
       .map((f) => f.slice(0, 10))
+      .filter(validNight)
       .sort()
       .reverse();
   } catch (error) {

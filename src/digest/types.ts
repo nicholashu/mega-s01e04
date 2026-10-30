@@ -27,6 +27,8 @@ export type NightDigest = {
 
 /**
  * Read runsDir/<night>.jsonl. Night must be a valid YYYY-MM-DD date.
+ * Event timestamps support up to three fractional digits (millisecond precision);
+ * higher-precision timestamps count as bad lines instead of losing chronology.
  * Invalid dates and paths escaping runsDir reject with RangeError; other I/O
  * failures propagate. Blank lines are ignored. Equal timestamps use file order
  * (the later line wins). Missing and empty nights both have no rows/bad lines.
